@@ -1,5 +1,5 @@
 import cv2
-from time import sleep
+import time
 
 # Initializations
 mouth_cascade = cv2.CascadeClassifier('mouth.xml')
@@ -7,7 +7,7 @@ face_cascade = cv2.CascadeClassifier('face.xml')
 if mouth_cascade.empty():
   raise IOError('Unable to load the mouth cascade classifier xml file')
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 def img_load(img_path):
     """
@@ -26,18 +26,22 @@ def draw(l_img, s_img, x_offset, y_offset, width, height):
     # http://stackoverflow.com/questions/14063070/overlay-a-smaller-image-on-a-larger-image-python-opencv
     for c in range(0,3):
         l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] = s_img[:,:,c] * (s_img[:,:,3]/255.0) +  l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] * (1.0 - s_img[:,:,3]/255.0)
-
     return l_img  # Return the drawn over background image
 
 def show_image(img):
-    cv2.imshow('Display', img)
-    cv2.waitKey(0)
+    cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause', img)
+    key = cv2.waitKey(10)
+    return key
 
 def get_height(img):
     return img.shape[0]
 
 def get_width(img):
     return img.shape[1]
+
+# Needed to detect faces with many shadows
+def set_exposure(expos):
+    cap.set(cv2.CAP_PROP_EXPOSURE, int(expos))
 
 # TODO: FUNCTIONS
 
