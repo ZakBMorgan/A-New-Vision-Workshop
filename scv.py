@@ -7,7 +7,7 @@ face_cascade = cv2.CascadeClassifier('face.xml')
 if mouth_cascade.empty():
   raise IOError('Unable to load the mouth cascade classifier xml file')
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 def img_load(img_path):
     """
@@ -29,7 +29,7 @@ def draw(l_img, s_img, x_offset, y_offset, width, height):
     return l_img  # Return the drawn over background image
 
 def show_image(img):
-    cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause', img)
+    cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause, Esc to exit', img)
     key = cv2.waitKey(10)
     return key
 

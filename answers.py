@@ -36,8 +36,7 @@ elif mode == 2:
             x, y, width, height = faces[-1]  # Get best match for mouth
             offset = int(y - y / 10)
             original = draw(original, stache, x, offset, int(width * 1.2), int(height * 1.2))
-            print(y)
-            print(x)
+
         key = show_image(original)
         if key == 32:
             time.sleep(5)
