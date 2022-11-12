@@ -37,7 +37,7 @@ def draw(l_img, s_img, x_offset, y_offset, width, height):
     return l_img  # Return the drawn over background image
 
 def show_image(img):
-    cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause, Esc to exit', img)
+    cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause, Esc to exit, A for Alien!', img)
     key = cv2.waitKey(5)
     return key
 

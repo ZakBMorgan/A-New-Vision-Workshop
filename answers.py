@@ -4,6 +4,7 @@ import math
 mode = 2
 key = 0
 expos = -8
+alien_switch = False
 
 # SUPER CHALLENGE # 1 ANSWER
 if mode == 0:
@@ -27,7 +28,9 @@ elif mode == 1:
 elif mode == 2:
     # SPACE NIGHT - ASTRONAUT IMAGE adapted from: (Public Domain license)
     # https://freesvg.org/astronauts-helmet-vector-image
-    stache = img_load('astro_helmet.png')  # Load the stache
+    # "Cute Alien" is original artwork (Aric Volman)
+    helmet = img_load('astro_helmet.png')  # Load the face
+    alien = img_load('cute_alien.png')  # Load the cute alien
     while True:
         original = get_camera_image()  # Load the original image
         faces = find_faces(original)  # Find the mouths
@@ -36,22 +39,31 @@ elif mode == 2:
             for i in range(0, len(faces)):
                 x, y, width, height = faces[i]  # Get best match for mouth
                 # print(height)
-                offset = int(y - math.sqrt(height))  # Using the inverse square law
-                original = draw(original, stache, x, offset, int(width * 1.2), int(height * 1.2))
+                offset_y = int(y - math.sqrt(height))  # Using the inverse square law
+                offset_x = int(x - math.sqrt(width))  # Using the inverse square law
+                if not alien_switch:
+                    original = draw(original, helmet, offset_x, offset_y, int(width * 1.2), int(height * 1.2))
+                if alien_switch:
+                    original = draw(original, alien, offset_x, offset_y, int(width * 1.2), int(height * 1.2))
 
         key = show_image(original)
-        if key == 32:
-            time.sleep(5)
+
+        if key == 97:  # A - Switches to and from Alien!
+            # time.sleep(1)
+            alien_switch = not alien_switch
+        if key == 32:  # Space bar - Pauses
+            time.sleep(10)
+
         if (expos <= -13):
             expos = -13
         if (expos >= -1):
             expos = -1
 
-        if key == 122:
+        if key == 122:  # Z key - Increase exposure
             expos += 1
             set_exposure(expos)
 
-        if key == 120:
+        if key == 120:  # X Key - Decrease exposure
             expos -= 1
             set_exposure(expos)
         if key == 27:  # if ESC is pressed, exit
