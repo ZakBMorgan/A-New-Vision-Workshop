@@ -33,9 +33,11 @@ elif mode == 2:
         faces = find_faces(original)  # Find the mouths
 
         if len(faces) != 0:  # If there are mouths
-            x, y, width, height = faces[-1]  # Get best match for mouth
-            offset = int(y - y / 10)
-            original = draw(original, stache, x, offset, int(width * 1.2), int(height * 1.2))
+            for i in range(0, len(faces)):
+                x, y, width, height = faces[i]  # Get best match for mouth
+                # print(height)
+                offset = int(y - math.sqrt(height))  # Using the inverse square law
+                original = draw(original, stache, x, offset, int(width * 1.2), int(height * 1.2))
 
         key = show_image(original)
         if key == 32:

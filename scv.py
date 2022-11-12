@@ -9,6 +9,10 @@ if mouth_cascade.empty():
 
 cap = cv2.VideoCapture(0)
 
+x_highbound = 550
+y_lowbound = 250
+y_highbound = 468
+
 def img_load(img_path):
     """
     Wrapper for cv2.imread, because we don't want the kids to have to access OpenCV directly.
@@ -24,13 +28,17 @@ def draw(l_img, s_img, x_offset, y_offset, width, height):
 
     # This Terrible Code was Copy Pasted Code from. OpenCV makes this really annoying but it works.:
     # http://stackoverflow.com/questions/14063070/overlay-a-smaller-image-on-a-larger-image-python-opencv
-    for c in range(0,3):
-        l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] = s_img[:,:,c] * (s_img[:,:,3]/255.0) +  l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] * (1.0 - s_img[:,:,3]/255.0)
+    # print(y_offset+s_img.shape[0])
+    if x_offset+s_img.shape[1] <= x_highbound:
+        if y_offset + s_img.shape[0] >= y_lowbound:
+            if y_offset+s_img.shape[0] <= y_highbound:
+                for c in range(0,3):
+                    l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] = s_img[:,:,c] * (s_img[:,:,3]/255.0) +  l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] * (1.0 - s_img[:,:,3]/255.0)
     return l_img  # Return the drawn over background image
 
 def show_image(img):
     cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause, Esc to exit', img)
-    key = cv2.waitKey(10)
+    key = cv2.waitKey(5)
     return key
 
 def get_height(img):
