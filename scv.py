@@ -1,5 +1,6 @@
 import cv2
 import time
+import math
 
 # Initializations
 mouth_cascade = cv2.CascadeClassifier('mouth.xml')
@@ -7,11 +8,17 @@ face_cascade = cv2.CascadeClassifier('face.xml')
 if mouth_cascade.empty():
   raise IOError('Unable to load the mouth cascade classifier xml file')
 
-cap = cv2.VideoCapture(0)
+# Title of window
+title = 'Display - Press Z/X to change exposure, Press Space to pause, Esc to exit'
 
-x_highbound = 550
-y_lowbound = 250
-y_highbound = 468
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+# Sets window to full screen
+cv2.namedWindow(title, cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty(title, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
 def img_load(img_path):
     """
@@ -24,21 +31,29 @@ def draw(l_img, s_img, x_offset, y_offset, width, height):
     Draws s_image on top of l_image starting at an x and y offset from the top left corner of the image, and with the
     given width and height.
     """
-    s_img = cv2.resize(s_img, (width, height), interpolation = cv2.INTER_AREA)  # Resize overlay image
+
+    # Modified to scale from 360p to 1080p, to increase performance
+
+    y_offset = 2*int(y_offset - math.sqrt(height))  # Using the inverse square law
+    x_offset = 2*int(x_offset - math.sqrt(width))  # Using the inverse square law
+
+    s_img = cv2.resize(s_img, (int(2.5*width), int(2.5*height)), interpolation = cv2.INTER_AREA)  # Resize overlay image
 
     # This Terrible Code was Copy Pasted Code from. OpenCV makes this really annoying but it works.:
     # http://stackoverflow.com/questions/14063070/overlay-a-smaller-image-on-a-larger-image-python-opencv
-    # print(y_offset+s_img.shape[0])
-    if x_offset+s_img.shape[1] <= x_highbound:
-        if y_offset + s_img.shape[0] >= y_lowbound:
-            if y_offset+s_img.shape[0] <= y_highbound:
-                for c in range(0,3):
-                    l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] = s_img[:,:,c] * (s_img[:,:,3]/255.0) +  l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] * (1.0 - s_img[:,:,3]/255.0)
+
+    # As of 1/15/2022 - Add error handling for this horrible code!
+
+    for c in range(0,3):
+        try:
+            l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] = s_img[:,:,c] * (s_img[:,:,3]/255.0) +  l_img[y_offset:y_offset+s_img.shape[0], x_offset:x_offset+s_img.shape[1], c] * (1.0 - s_img[:,:,3]/255.0)
+        except ValueError:
+            return l_img
     return l_img  # Return the drawn over background image
 
 def show_image(img):
-    cv2.imshow('Display - Press Z/X to change exposure, Press Space to pause, Esc to exit, A for Alien!', img)
-    key = cv2.waitKey(5)
+    cv2.imshow(title, img)
+    key = cv2.waitKey(0)
     return key
 
 def get_height(img):
@@ -58,9 +73,11 @@ def get_camera_image():
     return frame
 
 def find_mouths(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Convert to grayscale and downscale to 360p
+    gray = cv2.cvtColor(cv2.pyrDown(image), cv2.COLOR_BGR2GRAY)
     return mouth_cascade.detectMultiScale(gray, 1.7, 11)
 
 def find_faces(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return face_cascade.detectMultiScale(gray, 1.3, 5)
+    # Convert to grayscale and downscale to 360p
+    gray = cv2.cvtColor(cv2.pyrDown(image), cv2.COLOR_BGR2GRAY)
+    return face_cascade.detectMultiScale(gray, 1.7, 1)

@@ -38,21 +38,20 @@ elif mode == 2:
         if len(faces) != 0:  # If there are mouths
             for i in range(0, len(faces)):
                 x, y, width, height = faces[i]  # Get best match for mouth
-                # print(height)
-                offset_y = int(y - math.sqrt(height))  # Using the inverse square law
-                offset_x = int(x - math.sqrt(width))  # Using the inverse square law
+
                 if not alien_switch:
-                    original = draw(original, helmet, offset_x, offset_y, int(width * 1.2), int(height * 1.2))
+                    original = draw(original, helmet, x, y, width, height)
                 if alien_switch:
-                    original = draw(original, alien, offset_x, offset_y, int(width * 1.2), int(height * 1.2))
+                    original = draw(original, alien, x, y, width, height)
 
         key = show_image(original)
 
-        if key == 97:  # A - Switches to and from Alien!
+        # if key == 97:  # A - Switches to and from Alien!
             # time.sleep(1)
-            alien_switch = not alien_switch
+        #    alien_switch = not alien_switch
+
         if key == 32:  # Space bar - Pauses
-            time.sleep(10)
+            time.sleep(2)
 
         if (expos <= -13):
             expos = -13
