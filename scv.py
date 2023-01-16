@@ -13,8 +13,8 @@ title = 'Display - Press Z/X to change exposure, Press Space to pause, Esc to ex
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 # Sets window to full screen
 cv2.namedWindow(title, cv2.WND_PROP_FULLSCREEN)
@@ -37,7 +37,9 @@ def draw(l_img, s_img, x_offset, y_offset, width, height):
     y_offset = 2*int(y_offset - math.sqrt(height))  # Using the inverse square law
     x_offset = 2*int(x_offset - math.sqrt(width))  # Using the inverse square law
 
-    s_img = cv2.resize(s_img, (int(2.5*width), int(2.5*height)), interpolation = cv2.INTER_AREA)  # Resize overlay image
+    cv2.resize(l_img, (1920, 1080), interpolation=cv2.INTER_AREA)  # Resizes to 1080p
+
+    s_img = cv2.resize(s_img, (int(2.5*width), int(2.5*height)), interpolation=cv2.INTER_AREA)  # Resize overlay image
 
     # This Terrible Code was Copy Pasted Code from. OpenCV makes this really annoying but it works.:
     # http://stackoverflow.com/questions/14063070/overlay-a-smaller-image-on-a-larger-image-python-opencv
@@ -74,10 +76,10 @@ def get_camera_image():
 
 def find_mouths(image):
     # Convert to grayscale and downscale to 360p
-    gray = cv2.cvtColor(cv2.pyrDown(image), cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(cv2.resize(image, (640, 360), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY)
     return mouth_cascade.detectMultiScale(gray, 1.7, 11)
 
 def find_faces(image):
     # Convert to grayscale and downscale to 360p
-    gray = cv2.cvtColor(cv2.pyrDown(image), cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(cv2.resize(image, (640, 360), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY)
     return face_cascade.detectMultiScale(gray, 1.7, 1)
