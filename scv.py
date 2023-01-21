@@ -11,7 +11,7 @@ if mouth_cascade.empty():
 # Title of window
 title = 'Display - Press Z/X to change exposure, Press Space to pause, Esc to exit'
 
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
