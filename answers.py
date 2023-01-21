@@ -4,7 +4,8 @@ import math
 mode = 2
 key = 0
 expos = -8
-alien_switch = False
+switch = 0
+num_images = 2
 
 # SUPER CHALLENGE # 1 ANSWER
 if mode == 0:
@@ -31,6 +32,7 @@ elif mode == 2:
     # "Cute Alien" is original artwork (Aric Volman)
     helmet = img_load('astro_helmet.png')  # Load the face
     alien = img_load('cute_alien.png')  # Load the cute alien
+    dog = img_load('dog.png')
     while True:
         original = get_camera_image()  # Load the original image
         faces = find_faces(original)  # Find the mouths
@@ -39,16 +41,21 @@ elif mode == 2:
             for i in range(0, len(faces)):
                 x, y, width, height = faces[i]  # Get best match for mouth
 
-                if not alien_switch:
+                if switch == 0:
                     original = draw(original, helmet, x, y, width, height)
-                if alien_switch:
+                if switch == 1:
                     original = draw(original, alien, x, y, width, height)
+                if switch == 2:
+                    original = draw(original, dog, x, y, width, height)
 
         key = show_image(original)
 
-        # if key == 97:  # A - Switches to and from Alien!
+        if key == 97:  # A - Switches to and from different pictures!
             # time.sleep(1)
-        #    alien_switch = not alien_switch
+            if switch >= num_images:
+                switch = 0
+            else:
+                switch += 1
 
         if key == 32:  # Space bar - Pauses
             time.sleep(2)
