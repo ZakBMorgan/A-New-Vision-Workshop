@@ -2,10 +2,18 @@ from scv import *
 import math
 
 mode = 2
+
+# Keycode from OpenCV
 key = 0
+
+# Initial exposure setting for camera
 expos = -8
+
+# Variable to increment - adjusts which overlay we want initially
 switch = 0
-num_images = 2
+
+# Max number of images, delimited starting with 0
+num_images = 3
 
 # SUPER CHALLENGE # 1 ANSWER
 if mode == 0:
@@ -33,6 +41,7 @@ elif mode == 2:
     helmet = img_load('astro_helmet.png')  # Load the face
     alien = img_load('cute_alien.png')  # Load the cute alien
     dog = img_load('dog.png')
+    stache = img_load('stache2.png')
     while True:
         original = get_camera_image()  # Load the original image
         faces = find_faces(original)  # Find the mouths
@@ -47,6 +56,8 @@ elif mode == 2:
                     original = draw(original, alien, x, y, width, height)
                 if switch == 2:
                     original = draw(original, dog, x, y, width, height)
+                if switch == 3:
+                    original = draw(original, stache, x, y, width, height)
 
         key = show_image(original)
 
