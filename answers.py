@@ -13,7 +13,7 @@ expos = -8
 switch = 0
 
 # Max number of images, delimited starting with 0
-num_images = 4
+num_images = 5
 
 # SUPER CHALLENGE # 1 ANSWER
 if mode == 0:
@@ -43,6 +43,7 @@ elif mode == 2:
     dog = img_load('dog.png')
     stache = img_load('stache2.png')
     cat = img_load('cutecat.png')
+    mascot = img_load('mascot.png')
     while True:
         original = get_camera_image()  # Load the original image
         faces = find_faces(original)  # Find the mouths
@@ -61,6 +62,8 @@ elif mode == 2:
                     original = draw(original, stache, x, y, width, height)
                 if switch == 4:
                     original = draw(original, cat, x, y, width, height)
+                if switch == 5:
+                    original = draw(original, mascot, x, y, width, height)
 
 
         key = show_image(original)
