@@ -1,7 +1,7 @@
 from scv import *
 import math
 
-mode = 2
+mode = 3
 
 # Keycode from OpenCV
 key = 0
@@ -35,6 +35,34 @@ elif mode == 1:
 
 # MUSTACHE FINAL CHALLENGE ANSWER
 elif mode == 2:
+    stache = img_load('stache.png')  # Load the stache
+    while True:
+        original = get_camera_image()  # Load the original image
+        mouths = find_mouths(original)  # Find the mouths
+
+        if len(mouths) != 0:  # If there are mouths
+            x, y, width, height = mouths[-1]  # Get best match for mouth
+            original = draw(original, stache, x, int(y - height / 3.5), width, int(height / 1.2))
+
+        key = show_image(original)
+        if key == 27:  # if ESC is pressed, exit
+            cv2.destroyAllWindows()
+            break
+
+# CAFFE DNN DEMO
+elif mode == 3:
+    stache = img_load('astro_helmet.png')
+    while True:
+        original = get_camera_image()  # Load the original image
+        width, height, x, y = find_faces_dnn(original)
+        original = draw(original, stache, x, y, width, height)
+        key = show_image(original)
+        if key == 27:  # if ESC is pressed, exit
+            cv2.destroyAllWindows()
+            break
+
+# HAAR CASCADE DEMO
+elif mode == 4:
     # SPACE NIGHT - ASTRONAUT IMAGE adapted from: (Public Domain license)
     # https://freesvg.org/astronauts-helmet-vector-image
     # "Cute Alien" is original artwork (Aric Volman)
