@@ -1,7 +1,9 @@
+from time import sleep
+
 from scv import *
 import math
 
-mode = 3
+mode = 4
 
 # Keycode from OpenCV
 key = 0
@@ -10,10 +12,12 @@ key = 0
 expos = -8
 
 # Variable to increment - adjusts which overlay we want initially
-switch = 0
+switch = 3
 
 # Max number of images, delimited starting with 0
 num_images = 5
+
+toggle = False
 
 # SUPER CHALLENGE # 1 ANSWER
 if mode == 0:
@@ -37,26 +41,77 @@ elif mode == 1:
 elif mode == 2:
     stache = img_load('stache.png')  # Load the stache
     while True:
-        original = get_camera_image()  # Load the original image
-        mouths = find_mouths(original)  # Find the mouths
+        if not toggle:
+            original = get_camera_image()  # Load the original image
+            mouths = find_mouths(original)  # Find the mouths
 
-        if len(mouths) != 0:  # If there are mouths
-            x, y, width, height = mouths[-1]  # Get best match for mouth
-            original = draw(original, stache, x, int(y - height / 3.5), width, int(height / 1.2))
+            if len(mouths) != 0:  # If there are mouths
+                x, y, width, height = mouths[-1]  # Get best match for mouth
+                original = draw(original, stache, x, int(y - height / 3.5), width, int(height / 1.2))
 
         key = show_image(original)
         if key == 27:  # if ESC is pressed, exit
             cv2.destroyAllWindows()
             break
 
+        if key == 32:
+            toggle = not toggle
+
 # CAFFE DNN DEMO
 elif mode == 3:
-    stache = img_load('astro_helmet.png')
+    # SPACE NIGHT - ASTRONAUT IMAGE adapted from: (Public Domain license)
+    # https://freesvg.org/astronauts-helmet-vector-image
+    # "Cute Alien" is original artwork (Aric Volman)
+    helmet = img_load('astro_helmet.png')  # Load the face
+    alien = img_load('cute_alien.png')  # Load the cute alien
+    dog = img_load('dog.png')
+    stache = img_load('stache2.png')
+    cat = img_load('cutecat.png')
+    mascot = img_load('mascot.png')
+    original = get_camera_image()  # Load the original image
     while True:
-        original = get_camera_image()  # Load the original image
-        width, height, x, y = find_faces_dnn(original)
-        original = draw(original, stache, x, y, width, height)
+
+        if not toggle:
+            original = get_camera_image()  # Load the original image
+            width, height, x, y = find_faces_dnn(original)  # Get best match for mouth
+
+            if switch == 0:
+                original = draw(original, helmet, x, y, width, height)
+            if switch == 1:
+                original = draw(original, alien, x, y, width, height)
+            if switch == 2:
+                original = draw(original, dog, x, y, width, height)
+            if switch == 3:
+                original = draw(original, stache, x, y, width, height)
+            if switch == 4:
+                original = draw(original, cat, x, y, width, height)
+            if switch == 5:
+                original = draw(original, mascot, x, y, width, height)
+
         key = show_image(original)
+
+        if key == 97:  # A - Switches to and from different pictures!
+            # time.sleep(1)
+            if switch >= num_images:
+                switch = 0
+            else:
+                switch += 1
+
+        if key == 32:  # Space bar - Pauses
+            toggle = not toggle
+
+        if expos <= -13:
+            expos = -13
+        if expos >= -1:
+            expos = -1
+
+        if key == 122:  # Z key - Increase exposure
+            expos += 1
+            set_exposure(expos)
+
+        if key == 120:  # X Key - Decrease exposure
+            expos -= 1
+            set_exposure(expos)
         if key == 27:  # if ESC is pressed, exit
             cv2.destroyAllWindows()
             break
@@ -72,27 +127,28 @@ elif mode == 4:
     stache = img_load('stache2.png')
     cat = img_load('cutecat.png')
     mascot = img_load('mascot.png')
+    original = get_camera_image()  # Load the original image
     while True:
-        original = get_camera_image()  # Load the original image
-        faces = find_faces(original)  # Find the mouths
 
-        if len(faces) != 0:  # If there are mouths
-            for i in range(0, len(faces)):
-                x, y, width, height = faces[i]  # Get best match for mouth
+        if not toggle:
+            original = get_camera_image()  # Load the original image
+            faces = find_faces(original)  # Find the mouths
+            if len(faces) != 0:  # If there are mouths
+                for i in range(0, len(faces)):
+                    x, y, width, height = faces[i]  # Get best match for mouth
 
-                if switch == 0:
-                    original = draw(original, helmet, x, y, width, height)
-                if switch == 1:
-                    original = draw(original, alien, x, y, width, height)
-                if switch == 2:
-                    original = draw(original, dog, x, y, width, height)
-                if switch == 3:
-                    original = draw(original, stache, x, y, width, height)
-                if switch == 4:
-                    original = draw(original, cat, x, y, width, height)
-                if switch == 5:
-                    original = draw(original, mascot, x, y, width, height)
-
+                    if switch == 0:
+                        original = draw(original, helmet, x, y, width, height)
+                    if switch == 1:
+                        original = draw(original, alien, x, y, width, height)
+                    if switch == 2:
+                        original = draw(original, dog, x, y, width, height)
+                    if switch == 3:
+                        original = draw(original, stache, x, y, width, height)
+                    if switch == 4:
+                        original = draw(original, cat, x, y, width, height)
+                    if switch == 5:
+                        original = draw(original, mascot, x, y, width, height)
 
         key = show_image(original)
 
@@ -104,7 +160,7 @@ elif mode == 4:
                 switch += 1
 
         if key == 32:  # Space bar - Pauses
-            time.sleep(2)
+            toggle = not toggle
 
         if (expos <= -13):
             expos = -13
@@ -121,4 +177,3 @@ elif mode == 4:
         if key == 27:  # if ESC is pressed, exit
             cv2.destroyAllWindows()
             break
-
